@@ -1,16 +1,16 @@
 {
     "defmodule": {
-        "prefix": "defmo",
+        "prefix": "defmod",
         "body": ["defmodule ${1:module} do", "  $0", "end"],
         "description": "Define a module"
     },
     "def": {
-        "prefix": "def",
+        "prefix": "def-no-args",
         "body": ["def ${1:name}() do", "  $0", "end"],
         "description": "Define a function"
     },
     "defa": {
-        "prefix": "defa",
+        "prefix": "def-args",
         "body": ["def ${1:name}(${2:args}) do", "  $0", "end"],
         "description": "Define a function with arguments"
     },
@@ -20,22 +20,22 @@
         "description": "Define a private function"
     },
     "defpa": {
-        "prefix": "defpa",
+        "prefix": "defp-args",
         "body": ["defp ${1:name}(${2:args}) do", "  $0", "end"],
         "description": "Define a private function with arguments"
     },
     "df": {
-        "prefix": "df",
+        "prefix": "def-one-liner",
         "body": "def ${1:name}(), do: $0",
         "description": "Define a one-liner function"
     },
     "dfa": {
-        "prefix": "dfa",
+        "prefix": "def-one-liner-args",
         "body": "def ${1:name}(${2:args}), do: $0",
         "description": "Define a one-liner function with arguments"
     },
     "dfw": {
-        "prefix": "dfw",
+        "prefix": "def-one-liner-guard-clause",
         "body": "def ${1:name}(${2:args}) when ${3:guard}, do: $0",
         "description": "Define a one-liner function with when guard"
     },
@@ -80,7 +80,7 @@
         "body": ["for ${1:item} <- ${2:items} do", "  $0", "end"]
     },
     "def + doc": {
-        "prefix": "defd",
+        "prefix": "def-doc",
         "body": [
             "@doc \"\"\"",
             "${1:doc}",
@@ -91,7 +91,7 @@
         ]
     },
     "def + spec": {
-        "prefix": "defs",
+        "prefix": "def-spec",
         "body": [
             "@spec ${1:name}(${2:args}) :: ${3:no_return}",
             "def $1{4:args} do",
@@ -100,7 +100,7 @@
         ]
     },
     "def + doc + spec": {
-        "prefix": "defsd",
+        "prefix": "def-doc-spec",
         "body": [
             "@doc \"\"\"",
             "${1:doc}",
@@ -120,19 +120,19 @@
         "body": ["@doc \"\"\"", "$0", "\"\"\""]
     },
     "doc s": {
-        "prefix": "docs",
+        "prefix": "doc-s",
         "body": ["@doc ~S\"\"\"", "$0", "\"\"\""]
     },
     "doc false": {
-        "prefix": "docf",
+        "prefix": "doc-false",
         "body": "@doc false"
     },
     "moduledoc": {
-        "prefix": "mdoc",
+        "prefix": "module-doc",
         "body": ["@moduledoc \"\"\"", "$0", "\"\"\""]
     },
     "moduledoc s": {
-        "prefix": "mdocs",
+        "prefix": "module-doc-s",
         "body": ["@moduledoc ~S\"\"\"", "$0", "\"\"\""]
     },
     "moduledoc false": {
@@ -156,31 +156,31 @@
         "body": ["require IEx; IEx.pry", "$0"]
     },
     "pipe char": {
-        "prefix": "p",
+        "prefix": ">pipe-character",
         "body": "|> $0"
     },
     "pipe into each": {
-        "prefix": ">e",
+        "prefix": ">each",
         "body": "|> Enum.each($0)"
     },
     "pipe into map": {
-        "prefix": ">m",
+        "prefix": ">map",
         "body": "|> Enum.map($0)"
     },
     "pipe into filter": {
-        "prefix": ">f",
+        "prefix": ">filter",
         "body": "|> Enum.filter($0)"
     },
     "pipe into reduce": {
-        "prefix": ">r",
+        "prefix": ">reduce",
         "body": "|> Enum.reduce(${1:acc}, fn ${2}, ${3:acc} -> $0 end)"
     },
     "word list": {
-        "prefix": "wl",
+        "prefix": "wordlist",
         "body": "~w($0)"
     },
     "atom list": {
-        "prefix": "al",
+        "prefix": "atomlist",
         "body": "~w($0)a"
     },
     "insp": {
@@ -189,22 +189,32 @@
         "description": "Inspect process with a label"
     },
     "map": {
-        "prefix": "m",
-        "body": "%{\"${1}\" => ${2}}",
+        "prefix": "map",
+        "body": "%{\"${1}\" => ${2}}${0}",
         "description": "Elixir map"
     },
-    "lv_mount": {
-        "prefix": "mount",
+    "lv_mount_atom_and_value": {
+        "prefix": "mount-atom+value",
         "body": [
             "def mount(_params, _session, socket) do",
             "  socket = assign(socket, :${1:key}, ${2:value})",
             "  {:ok, socket}",
             "end"
         ],
-        "description": "LiveView mount function"
+        "description": "LiveView mount function, socket with atom and value"
     },
-    "lv_mount2": {
-        "prefix": "mount2",
+    "lv_mount_atom_and_value_with_args": {
+        "prefix": "mount-atom+value-args",
+        "body": [
+            "def mount(${1:_params}, ${2:_session}, socket) do",
+            "  socket = assign(socket, :${3:key}, ${4:value})",
+            "  {:ok, socket}",
+            "end"
+        ],
+        "description": "LiveView mount function, socket with atom and value and arguments"
+    },
+    "lv_mount_keyword_list": {
+        "prefix": "mount-keyword-list",
         "body": [
             "def mount(_params, _session, socket) do",
             "  socket =",
@@ -215,10 +225,24 @@
             "  {:ok, socket}",
             "end"
         ],
-        "description": "LiveView mount function"
+        "description": "LiveView mount function, socket with multi-line keyword list"
+    },
+    "lv_mount_keyword_list_with_args": {
+        "prefix": "mount-keyword-list-args",
+        "body": [
+            "def mount(${1:_params}, ${2:_session}, socket) do",
+            "  socket =",
+            "    assign(socket,",
+            "      ${1:key}: ${2:value}",
+            "    )",
+            "",
+            "  {:ok, socket}",
+            "end"
+        ],
+        "description": "LiveView mount function, socket with multi-line keyword list and arguments"
     },
     "lv_render": {
-        "prefix": "rend",
+        "prefix": "render-with-heex",
         "body": [
             "def render(assigns) do",
             "  ~H\"\"\"",
@@ -229,7 +253,7 @@
         "description": "LiveView render function"
     },
     "lv_heex": {
-        "prefix": "h",
+        "prefix": "heex-template",
         "body": [
             "~H\"\"\"",
             "${0}",
@@ -238,7 +262,7 @@
         "description": "LiveView HEEx template"
     },
     "lv_handle_event": {
-        "prefix": "he",
+        "prefix": "handle-event-noop",
         "body": [
             "def handle_event(${1:event}, _, socket) do",
             "  {:noreply, socket}",
@@ -247,27 +271,27 @@
         "description": "LiveView handle_event function"
     },
     "lv_handle_event1": {
-        "prefix": "he1",
+        "prefix": "handle-event-assign",
         "body": [
             "def handle_event(${1:event}, _, socket) do",
             "  socket = assign(socket, ${2:key}: ${3:value})",
             "  {:noreply, socket}",
             "end"
         ],
-        "description": "LiveView handle_event function"
+        "description": "LiveView handle_event function, with keyword list"
     },
-    "lv_handle_event2": {
-        "prefix": "he2",
+    "lv_handle_event1.5": {
+        "prefix": "handle-event-assign-with-params",
         "body": [
-            "def handle_event(${1:event}, _, socket) do",
-            "  socket = assign(socket, ${2:key}: ${3:value})",
+            "def handle_event(${1:event}, ${2:_params}, socket) do",
+            "  socket = assign(socket, ${3:key}: ${4:value})",
             "  {:noreply, socket}",
             "end"
         ],
-        "description": "LiveView handle_event function"
+        "description": "LiveView handle_event function, with keyword list and params"
     },
     "lv_handle_info": {
-        "prefix": "hi",
+        "prefix": "handle-info-noop",
         "body": [
             "def handle_info(${1:message}, socket) do",
             "  {:noreply, socket}",
@@ -276,17 +300,17 @@
         "description": "LiveView handle_info function"
     },
     "lv_handle_info1": {
-        "prefix": "hi1",
+        "prefix": "handle-info-assign-kv",
         "body": [
             "def handle_info(${1:message}, socket) do",
             "  socket = assign(socket, ${2:key}: ${3:value})",
             "  {:noreply, socket}",
             "end"
         ],
-        "description": "LiveView handle_info function"
+        "description": "LiveView handle_info function with key-value"
     },
     "lv_handle_info2": {
-        "prefix": "hi2",
+        "prefix": "handle-info-assign-keyword-list",
         "body": [
             "def handle_info(${1:message}, socket) do",
             "  socket =",
@@ -297,10 +321,10 @@
             "  {:noreply, socket}",
             "end"
         ],
-        "description": "LiveView handle_info function"
+        "description": "LiveView handle_info function with keyword list"
     },
     "lv_handle_params": {
-        "prefix": "hp",
+        "prefix": "handle-par",
         "body": [
             "def handle_params(${1:params}, _uri, socket) do",
             "  {:noreply, socket}",
@@ -309,7 +333,7 @@
         "description": "LiveView handle_params function"
     },
     "lv_function_component": {
-        "prefix": "fc",
+        "prefix": "func-comp",
         "body": [
             "def ${1:name}(assigns) do",
             "  ~H\"\"\"",
@@ -319,23 +343,23 @@
         ],
         "description": "LiveView function component"
         },
-        "lv_assign": {
-        "prefix": "assign",
+    "lv_assign": {
+        "prefix": "assign-one-liner-kv",
         "body": "socket = assign(socket, :${1:key}, ${2:value})",
-        "description": "LiveView assign"
+        "description": "LiveView assign one-liner key-value"
         },
     "lv_assign2": {
-        "prefix": "assign2",
+        "prefix": "assign-multi-line-kwl",
         "body": [
             "socket =",
             "  assign(socket,",
             "    ${1:key}: ${2:value}",
             "  )"
         ],
-        "description": "LiveView assign"
+        "description": "LiveView assign multi-line keyword list"
     },
     "use_lv": {
-        "prefix": "lv",
+        "prefix": "use-live-view",
         "body": "use ${WORKSPACE_NAME/(.*)/${1:/pascalcase}/g}Web, :live_view",
         "description": "Use :live_view"
     }
